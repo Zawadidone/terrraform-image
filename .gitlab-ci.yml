@@ -25,5 +25,5 @@ build:
   stage: build
   script:
    - docker build --build-arg VERSION=$VERSION -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
-   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+   - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   needs: ["retrieve_version"]
