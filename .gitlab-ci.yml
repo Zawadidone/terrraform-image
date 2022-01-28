@@ -1,0 +1,38 @@
+default:
+  image:
+    name: docker:20
+
+stages:
+  - build
+  - test 
+  - release
+
+build:
+  stage: build
+  script:
+    - apk add jq
+    - echo VERSION="`curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version`" > $CI_PROJECT_DIR/variables
+    - docker build --build-arg VERSION=$VERSION -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  artifacts:
+    reports:
+      dotenv: variables
+
+
+test:
+  stage: test
+  script:
+    - docker pull
+    - docker run test command
+    - 
+  dependencies:
+    - build
+
+release:
+  stage: release
+  only:
+    - main
+  script:
+    - docker pull
+    - docker tag docker:stable
+    - docker push
