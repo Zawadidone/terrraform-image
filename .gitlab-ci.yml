@@ -19,20 +19,3 @@ build:
       dotenv: variables
 
 
-test:
-  stage: test
-  script:
-    - docker pull
-    - docker run test command
-    - 
-  dependencies:
-    - build
-
-release:
-  stage: release
-  only:
-    - main
-  script:
-    - docker pull
-    - docker tag docker:stable
-    - docker push
