@@ -11,8 +11,8 @@ before_script:
 
 stages:
   - build
-#  - test 
-#  - release
+  - test 
+  - release
 
 retrieve_version:
   stage: build
@@ -29,3 +29,27 @@ build:
    - docker build --build-arg VERSION=$VERSION -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG .
    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   needs: ["retrieve_version"]
+
+test:
+  stage: test
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG version
+
+release-version:
+  stage: release
+  only:
+    - main
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $CI_REGISTRY_IMAGE:$VERSION
+    - docker push $CI_REGISTRY_IMAGE:$VERSION
+
+release-stable:
+  stage: release
+  only:
+    - main
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $CI_REGISTRY_IMAGE:stable
+    - docker push $CI_REGISTRY_IMAGE:stable
