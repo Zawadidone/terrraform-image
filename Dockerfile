@@ -2,7 +2,8 @@ ARG VERSION
 
 FROM hashicorp/terraform:$VERSION as build
 
-RUN adduser -D -H -u 1000 terraform
+RUN apk add tzdata && \                      
+    adduser -D -H -u 1000 terraform
 
 # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/26501
 #FROM scratch
