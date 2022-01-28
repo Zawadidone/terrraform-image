@@ -4,8 +4,8 @@ default:
 
 stages:
   - build
-  - test 
-  - release
+#  - test 
+#  - release
 
 build:
   stage: build
