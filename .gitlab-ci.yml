@@ -7,15 +7,18 @@ stages:
 #  - test 
 #  - release
 
-build:
+retrieve_version:
   stage: build
-  script:
-    - apk add jq
-    - echo VERSION="`curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version`" > $CI_PROJECT_DIR/variables
-    - docker build --build-arg VERSION=$VERSION -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script: 
+    - apk add jq curl
+    - echo VERSION="$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)" > $CI_PROJECT_DIR/variables
   artifacts:
     reports:
       dotenv: variables
 
-
+build:
+  stage: build
+  script:
+   - docker build --build-arg VERSION=$VERSION -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  needs: ["retrieve_version"]
